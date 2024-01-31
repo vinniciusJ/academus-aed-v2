@@ -10,6 +10,7 @@ typedef struct {
     int subject_code;
     int professor_code;
     int academic_year;
+    char * code;
 } Module;
 
 typedef struct {

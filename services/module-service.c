@@ -18,127 +18,97 @@ typedef struct {
     ModuleNode * value;
 } Position;
 
-// Pré-condição: um novo módulo e um arquivo aberto para escrita
-// Pós-condição: módulo salvo no arquivo lista
-Status * insert_module(Module module, FILE * file){
-    Header * header = read_header(file);
-    ModuleNode node = { module, header->root_position };
+char* concatenate_integers(int num1, int num2) {
+    int length = snprintf(NULL, 0, "%d", num1) + snprintf(NULL, 0, "%d", num2) + 1;
 
-    Status * status = validate_module(module);
-    /*
-    if(status->code == 1) {
-        if (header->free_position == -1) {
-            set_node(&node, sizeof(ModuleNode), header->top_position, file); // Escrevendo nó no arquivo lista
-            header->root_position = header->top_position;
-            header->top_position++;
-        } else {
-            ModuleNode *aux = read_node(header->free_position, sizeof(ModuleNode), file);
+    char* result = (char*)malloc(length);
 
-            set_node(&node, sizeof(ModuleNode), header->free_position, file);
-            header->root_position = header->free_position;
-            header->root_position = aux->next;
-
-            aux = free_space(aux);
-        }
-
-        set_header(header, file);
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
     }
 
+    snprintf(result, length, "%d%d", num1, num2);
+
+    return result;
+}
+
+// Pré-condição: um novo módulo e um arquivo aberto para escrita
+// Pós-condição: módulo salvo no arquivo lista
+Status * insert_module(Module module, int current_position, FILE * file){
+    Header * header = read_header(file);
+
+    module.code = concatenate_integers(module.academic_year, module.subject_code);
+
+    ModuleNode node = {module, -1, -1};
+
+    Status * status = validate_module(module);
+
+    if(current_position == -1){
+        set_node(&node, sizeof(ModuleNode), header->top_position, file);
+        header->root_position = header->top_position;
+        header->top_position++;
+    }
+    else {
+        ModuleNode * current_node = read_node(current_position, sizeof(ModuleNode), file);
+
+        if(strcmp(module.code, current_node->value.code) < 0){
+            if(current_node->left == -1){
+                set_node(&node, sizeof(ModuleNode), header->top_position, file);
+
+                current_node->left = header->top_position;
+                header->top_position++;
+            }
+            else {
+                insert_module(module, current_node->left, file);
+            }
+        }
+        else if(strcmp(module.code, current_node->value.code) > 0){
+            if(current_node->right == -1){
+                set_node(&node, sizeof(ModuleNode), header->top_position, file);
+
+                current_node->right = header->top_position;
+                header->top_position++;
+            }
+            else {
+                insert_module(module, current_node->right, file);
+            }
+        }
+
+        set_node(current_node, sizeof(ModuleNode), current_position, file);
+    }
+
+    set_header(header, file);
     free_space(header);
-     */
 
     return status;
 }
 
-Position get_module_position(Module module, Header * header, FILE * file){
-   int position = header->root_position;
-    int previous = header->root_position;
 
-    ModuleNode * aux = NULL;
-    /*
-       int subject_code = module.subject_code;
-       int academic_year = module.academic_year;
 
-       while(position != -1  && (aux = read_node(position, sizeof(ModuleNode), file)) != NULL){
-           if(aux->value.academic_year == academic_year && aux->value.subject_code == subject_code){
-               break;
-           }
-
-           previous = position;
-           position = aux->next;
-
-           aux = free_space(aux);
-       }
-
-       Position module_position = { position, previous, aux->next, aux };
-
-       return module_position;
-        */
-    Position module_position = { position, previous, 0, aux};
-
-    return module_position;
-}
-
-// Retira um módulo do arquivo lista
-// Pré-condição: arquivo aberto para escrita e deve ser um arquivo lista
-// Pós-condição: módulo retirado da lista caso pertença a ela
-void remove_module(Module module, FILE * file){
-    /*Header * header = read_header(file);
-
-    Position position = get_module_position(module, header, file);
-
-    if(position.current != -1){
-        if(position.current == position.previous){
-            header->root_position = position.next;
-        }
-        else{
-            ModuleNode * previous = read_node(position.previous, sizeof(ModuleNode), file);
-
-            previous->next = position.next;
-            set_node(previous, sizeof(ModuleNode), position.previous, file);
-            free_space(previous);
-        }
-
-        position.value->next = header->free_position;
-        header->free_position = position.current;
-
-        set_node(position.value, sizeof(ModuleNode), position.current, file);
-        set_header(header, file);
-
-        free_space(position.value);
+ModuleNode * get_module_by_course(int course_code, int current_position, FILE * modules_file, FILE * subjects_file){
+    if(current_position == -1){
+        return NULL;
     }
 
-    free_space(header);*/
+    Header * subject_header = read_header(subjects_file);
+
+    ModuleNode * module_node = read_node(current_position, sizeof(ModuleNode), modules_file);
+    Subject * subject = get_subject_by_code(module_node->value.subject_code, subject_header->root_position,
+                                                subjects_file);
+
+    free_space(subject_header);
+
+    if(subject != NULL && subject->course_code == course_code){
+        return module_node;
+    }
+    else if(course_code < subject->course_code){
+        return get_module_by_course(course_code, module_node->left, modules_file, subjects_file);
+    }
+    else {
+        return get_module_by_course(course_code, module_node->right, modules_file, subjects_file);
+    }
 }
-
-ModuleNode * get_module_by_course(int course_code, int start_position, FILE * modules_file, FILE * subjects_file){
-    /* Header * header = read_header(modules_file);
-
-     ModuleNode * module_node = NULL;
-     Subject * subject = NULL;
-
-     int position = start_position == -1 ? header->root_position : start_position;
-
-     if(is_list_empty(header)){
-         return NULL;
-     }
-
-     while(position != -1){
-         module_node = read_node(position, sizeof(ModuleNode), modules_file);
-
-         Module module = module_node->value;
-         subject = get_subject_by_code(module.subject_code, subjects_file);
-
-         if(subject != NULL && subject->course_code == course_code){
-             return module_node;
-         }
-
-         position = module_node->next;
-     }
- */
-     return NULL;
-
- }
 
  Module * get_module_by(int academic_year, int subject_code, FILE * modules_file){
      /*Header * header = read_header(modules_file);

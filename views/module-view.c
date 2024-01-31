@@ -51,7 +51,7 @@ Module * input_module(){
         scanf("%d%*c", &module->professor_code);
     } while(!is_valid_natural(module->professor_code));
 
-    system("clear");
+    //system("clear");
 
     return module;
 }
