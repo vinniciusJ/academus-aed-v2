@@ -24,7 +24,8 @@ void show_module_menu(){
     printf("|[0] Voltar                                                      |\n");
     printf("|[1] Cadastrar módulo                                            |\n");
     printf("|[2] Listar módulos por curso                                    |\n");
-    printf("|[3] Remover módulo                                              |\n");
+    printf("|[3] Listar códigos por camada                                   |\n");
+    printf("|[4] Remover módulo                                              |\n");
     printf("+----------------------------------------------------------------+\n");
 }
 

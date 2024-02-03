@@ -17,7 +17,7 @@ Status * insert_module(Module module, int current_position, FILE * file);
 // Retira um módulo do arquivo lista
 // Pré-condição: arquivo aberto para escrita e deve ser um arquivo lista
 // Pós-condição: módulo retirado da lista caso pertença a ela
-void remove_module(Module module, FILE * file);
+int remove_module(Module module,int current_position, FILE * file);
 
 ModuleNode * get_module_by_course(int course_code, int current_position, FILE * modules_file, FILE * subjects_file);
 

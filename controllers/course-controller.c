@@ -7,9 +7,13 @@
 #include "../app.h"
 #include "../views/headers/views.h"
 #include "../utils/headers/file.h"
+#include "../utils/headers/queue.h"
 #include "../utils/headers/list.h"
 #include "../services/headers/course-service.h"
 #include "../utils/headers/utils.h"
+#include "../models/module.h"
+
+#include <string.h>
 
 // Inicia a navegação na seção de cursos
 // Pré-condição: nenhuma
@@ -110,3 +114,4 @@ void show_courses() {
     wait_to_continue();
 
 }
+

@@ -15,6 +15,7 @@
 #include "../services/headers/professor-service.h"
 #include "../services/headers/subject-service.h"
 #include "../models/course.h"
+#include "../utils/headers/queue.h"
 
 #define MODULES_FILE "module.bin"
 
@@ -40,6 +41,9 @@ void start_module_router(){
             show_modules();
             break;
         case 3:
+            show_module_codes_by_layer();
+            break;
+        case 4:
             delete_course();
             break;
         default:
@@ -167,9 +171,13 @@ void show_modules() {
 }
 
 void delete_course(){
-    /*FILE * modules_file = open_bin_tree_file(MODULES_FILE);
+    FILE * modules_file = open_bin_tree_file(MODULES_FILE);
     FILE * professor_file = open_bin_tree_file("professor.bin");
     FILE * subject_file = open_bin_tree_file("subject.bin");
+
+    Header * professor_header = read_header(professor_file);
+    Header * subject_header = read_header(subject_file);
+    Header * module_header = read_header(modules_file);
 
     show_module_menu_header();
 
@@ -185,8 +193,9 @@ void delete_course(){
         return;
     }
 
-    Professor * professor = get_professor_by_code(module->professor_code, professor_file);
-    Subject  * subject = get_subject_by_code(module->subject_code, subject_file);
+    Professor * professor = get_professor_by_code(module->professor_code,professor_header->root_position,
+                                                  professor_file);
+    Subject  * subject = get_subject_by_code(module->subject_code, subject_header->root_position, subject_file);
 
     show_module_table_header();
     show_module(*module, *subject, *professor);
@@ -195,9 +204,38 @@ void delete_course(){
 
     if(confirmed){
         system("clear");
-        remove_module(*module, modules_file);
+        remove_module(*module, module_header->root_position, modules_file);
         show_sucess_message("Módulo de disciplina excluído com sucesso");
 
         wait_to_continue();
-    }*/
+    }
+}
+
+void show_module_codes_by_layer(){
+    FILE * file = open_bin_tree_file("module.bin");
+    Header * header = read_header(file);
+
+    ModuleNode * root = read_node(header->root_position, sizeof(ModuleNode), file);
+    Queue * queue = create_queue();
+
+    enqueue(root, queue);
+
+    while(!is_queue_empty(queue)){
+        ModuleNode * current = dequeue(queue);
+
+        printf("%d%d ", current->value.academic_year, current->value.subject_code);
+
+        if(current->left != -1){
+            current = read_node(current->left, sizeof (ModuleNode), file);
+            enqueue(current, queue);
+        }
+
+        if(current->right != -1){
+            current = read_node(current->right, sizeof (ModuleNode), file);
+
+            enqueue(current, queue);
+        }
+    }
+
+    clean_queue(queue);
 }

@@ -22,5 +22,7 @@ void show_modules();
 
 void delete_course();
 
+void show_module_codes_by_layer();
+
 
 #endif //ACADEMUS_MODULE_CONTROLLER_H
