@@ -68,6 +68,7 @@ void create_course() {
     free_space(course);
     free_space(status);
     fclose(file);
+    wait_to_continue();
 }
 
 void show_courses_inorder(int currentPosition, FILE *file) {
@@ -81,6 +82,7 @@ void show_courses_inorder(int currentPosition, FILE *file) {
     show_courses_inorder(course_node->left, file);
 
     // Process the current node (display the course information)
+
     show_course(course_node->value);
 
     // Traverse the right subtree

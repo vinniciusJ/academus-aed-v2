@@ -13,10 +13,11 @@ Status * insert_course(Course course, int current_position, FILE * file) {
     Header * header = read_header(file);
     Status * status = validate_course(course, file);
 
-    if(current_position == -1){
-        CourseNode node = {course, -1, -1};
+    CourseNode node = {course, -1, -1};
 
+    if(current_position == -1){
         set_node(&node, sizeof(CourseNode), header->top_position, file);
+
         header->root_position = header->top_position;
         header->top_position++;
     }
@@ -25,14 +26,10 @@ Status * insert_course(Course course, int current_position, FILE * file) {
 
         if(course.code < current_node->value.code){
             if(current_node->left == -1){
-                CourseNode node = {course, -1, -1};
-
                 set_node(&node, sizeof(CourseNode), header->top_position, file);
 
                 current_node->left = header->top_position;
                 header->top_position++;
-
-
             }
             else {
                 insert_course(course, current_node->left, file);
@@ -41,8 +38,6 @@ Status * insert_course(Course course, int current_position, FILE * file) {
         }
         else if(course.code > current_node->value.code){
             if(current_node->right == -1){
-                CourseNode node = {course, -1, -1};
-
                 set_node(&node, sizeof(CourseNode), header->top_position, file);
 
                 current_node->right = header->top_position;
@@ -93,8 +88,9 @@ Course * get_course_by_code(int code, int current_position, FILE * file){
 // Pós-condição: status para a inserção (código 1 para sucesso e 0 para erro)
 Status * validate_course(Course course, FILE * file) {
     Status * status = (Status *) alloc(sizeof(Status));
-/*
-    if(get_course_by_code(course.code, file)) {
+    Header * header = read_header(file);
+
+    if(get_course_by_code(course.code, header->root_position, file)) {
         status->code = 0;
         char message[256];
         sprintf(message, "Já existe um curso cadastrado com o código %d! Portanto o curso não foi cadastrado.", course.code);
@@ -103,6 +99,8 @@ Status * validate_course(Course course, FILE * file) {
         status->code = 1;
         strcpy(status->message, "Curso cadastrado com sucesso!");
     }
-/*/
+
+    free_space(header);
+
     return status;
 }
