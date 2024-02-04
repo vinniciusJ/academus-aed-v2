@@ -188,11 +188,21 @@ void delete_course(){
 
     if(confirmed){
         system("clear");
-        remove_module(*module, module_header->root_position, modules_file);
+
+        int root_position = remove_module(*module, module_header->root_position, modules_file);
+
+        module_header->root_position = root_position;
+
+        set_header(module_header, modules_file);
+
         show_sucess_message("Módulo de disciplina excluído com sucesso");
 
         wait_to_continue();
     }
+
+    fclose(subject_file);
+    fclose(modules_file);
+    fclose(professor_file);
 }
 
 void show_module_codes_by_layer(){
@@ -223,4 +233,6 @@ void show_module_codes_by_layer(){
 
         printf("\n");
     }
+    wait_to_continue();
+
 }

@@ -112,47 +112,51 @@ int get_min_node(int current_position, FILE * file){
 
 
 int remove_module(Module module, int current_position, FILE * file){
-    if(current_position == -1){
+    printf("current position = %d\n", current_position);
+    if (current_position == -1) {
         return -1;
     }
 
-    Header * header = read_header(file);
-
     ModuleNode * node = read_node(current_position, sizeof(ModuleNode), file);
 
-    if(strcmp(module.code, node->value.code) < 0){
+    char * module_code = concatenate_integers(module.academic_year, module.subject_code);
+    char * node_code = concatenate_integers(node->value.academic_year, node->value.subject_code);
+
+    if (strcmp(module_code, node_code) < 0) {
         node->left = remove_module(module, node->left, file);
         set_node(node, sizeof(ModuleNode), current_position, file);
     }
-    else if(strcmp(module.code, node->value.code) < 0){
+    else if (strcmp(module_code, node_code) > 0) {
         node->right = remove_module(module, node->right, file);
         set_node(node, sizeof(ModuleNode), current_position, file);
     }
-    else{
-        if(node->left == -1){
-
-            ModuleNode * right = read_node(node->right, sizeof(ModuleNode), file);
-
-            free_space(node);
-            node = right;
-        }
-        else if(node->right == -1){
-            ModuleNode * left = read_node(node->left, sizeof(ModuleNode), file);
+    else {
+        if (node->left == -1) {
+            int right = node->right;
 
             free_space(node);
-            node = left;
-        }
-        else{
-            int min_position = get_min_node(current_position, file);
-            ModuleNode * min_node = read_node(min_position, sizeof(ModuleNode), file);
 
-            node->value = min_node->value;
-
-            remove_module(module, min_node->right, file);
+            return right;
         }
+        else if (node->right == -1) {
+            int left = node->left;
+
+            free_space(node);
+
+            return left;
+        }
+
+        int min_position = get_min_node(node->right, file);
+        ModuleNode * min_node = read_node(min_position, sizeof(ModuleNode), file);
+
+        node->value = min_node->value;
+
+        node->right = remove_module(module, node->right, file);
     }
 
     set_node(node, sizeof(ModuleNode), current_position, file);
+
+    return current_position;
 }
 
  Module * get_module_by(int academic_year, int subject_code, FILE * modules_file){
