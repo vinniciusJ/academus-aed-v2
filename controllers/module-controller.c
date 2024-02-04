@@ -54,6 +54,8 @@ void start_module_router(){
     start_module_router();
 }
 
+
+
 // Lida com a criação de um módulo
 // Pré-condição: nenhuma
 // Pós-condição: módulo criado e inserido no arquivo
@@ -67,6 +69,7 @@ void create_module(){
     Header * subject_header = read_header(subject_file);
 
     Module * module = input_module();
+    module->code = concatenate_integers(module->academic_year, module->subject_code);
 
     Status * status = insert_module(*module, module_header->root_position, module_file);
 
@@ -212,7 +215,7 @@ void delete_course(){
 }
 
 void show_module_codes_by_layer(){
-    FILE * file = open_bin_tree_file("module.bin");
+    FILE * file = open_bin_tree_file(MODULES_FILE);
     Header * header = read_header(file);
 
     ModuleNode * root = read_node(header->root_position, sizeof(ModuleNode), file);
@@ -221,21 +224,22 @@ void show_module_codes_by_layer(){
     enqueue(root, queue);
 
     while(!is_queue_empty(queue)){
-        ModuleNode * current = dequeue(queue);
+        int queue_length = get_queue_length(queue);
 
-        printf("%d%d ", current->value.academic_year, current->value.subject_code);
+        for(int i = 0; i < queue_length; i++){
+            ModuleNode * current = dequeue(queue);
 
-        if(current->left != -1){
-            current = read_node(current->left, sizeof (ModuleNode), file);
-            enqueue(current, queue);
+            printf("%d%d ", current->value.academic_year, current->value.subject_code);
+
+            if(current->left != -1){
+                enqueue(read_node(current->left, sizeof (ModuleNode), file), queue);
+            }
+
+            if(current->right != -1){
+                enqueue(read_node(current->right, sizeof (ModuleNode), file), queue);
+            }
         }
 
-        if(current->right != -1){
-            current = read_node(current->right, sizeof (ModuleNode), file);
-
-            enqueue(current, queue);
-        }
+        printf("\n");
     }
-
-    clean_queue(queue);
 }

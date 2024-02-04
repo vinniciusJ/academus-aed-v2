@@ -30,3 +30,18 @@ void * free_space(void * ptr){
 
     return NULL;
 }
+
+char* concatenate_integers(int num1, int num2) {
+    int length = snprintf(NULL, 0, "%d", num1) + snprintf(NULL, 0, "%d", num2) + 1;
+
+    char* result = (char*)malloc(length);
+
+    if (result == NULL) {
+        fprintf(stderr, "Memory allocation failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    snprintf(result, length, "%d%d", num1, num2);
+
+    return result;
+}

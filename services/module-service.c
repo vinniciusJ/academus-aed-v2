@@ -17,27 +17,11 @@ typedef struct Position {
     ModuleNode *value;
 } Position;
 
-char* concatenate_integers(int num1, int num2) {
-    int length = snprintf(NULL, 0, "%d", num1) + snprintf(NULL, 0, "%d", num2) + 1;
-
-    char* result = (char*)malloc(length);
-
-    if (result == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    snprintf(result, length, "%d%d", num1, num2);
-
-    return result;
-}
 
 // Pré-condição: um novo módulo e um arquivo aberto para escrita
 // Pós-condição: módulo salvo no arquivo lista
 Status * insert_module(Module module, int current_position, FILE * file){
     Header * header = read_header(file);
-
-    module.code = concatenate_integers(module.academic_year, module.subject_code);
 
     ModuleNode node = {module, -1, -1};
 
@@ -51,7 +35,9 @@ Status * insert_module(Module module, int current_position, FILE * file){
     else {
         ModuleNode * current_node = read_node(current_position, sizeof(ModuleNode), file);
 
-        if(strcmp(module.code, current_node->value.code) < 0){
+        char * current_code = concatenate_integers(current_node->value.academic_year, current_node->value.subject_code);
+
+        if(strcmp(module.code, current_code) < 0){
             if(current_node->left == -1){
                 set_node(&node, sizeof(ModuleNode), header->top_position, file);
 
@@ -62,7 +48,7 @@ Status * insert_module(Module module, int current_position, FILE * file){
                 insert_module(module, current_node->left, file);
             }
         }
-        else if(strcmp(module.code, current_node->value.code) > 0){
+        else if(strcmp(module.code, current_code) > 0){
             if(current_node->right == -1){
                 set_node(&node, sizeof(ModuleNode), header->top_position, file);
 
@@ -74,6 +60,7 @@ Status * insert_module(Module module, int current_position, FILE * file){
             }
         }
 
+        free_space(current_code);
         set_node(current_node, sizeof(ModuleNode), current_position, file);
     }
 
@@ -204,7 +191,7 @@ int remove_module(Module module, int current_position, FILE * file){
      FILE * subject_file = open_bin_tree_file("subject.bin");
      FILE * professor_file = open_bin_tree_file("professor.bin");
      Status * status = (Status *) alloc(sizeof(Status));
-     status->code = 0;
+     status->code = 1;
 
      /*char message[1000];
 

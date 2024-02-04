@@ -16,4 +16,6 @@ void * alloc(size_t size);
 // Pós-condição: retorna um endereço NULL
 void * free_space(void * ptr);
 
+char* concatenate_integers(int num1, int num2);
+
 #endif //ACADEMUS_MEMORY_H

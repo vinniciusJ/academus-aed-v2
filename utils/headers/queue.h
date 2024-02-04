@@ -22,6 +22,6 @@ Queue * create_queue();
 int is_queue_empty(Queue * queue);
 void enqueue(ModuleNode * value, Queue * queue);
 ModuleNode * dequeue(Queue * queue);
-void clean_queue(Queue * queue);
+int get_queue_length(Queue * queue);
 
 #endif //ACADEMUS_QUEUE_H

@@ -52,12 +52,18 @@ ModuleNode * dequeue(Queue * queue){
 
     return last_data;
 }
-void clean_queue(Queue * queue){
-    while(is_queue_empty(queue)){
-        dequeue(queue);
+
+int get_queue_length(Queue * queue) {
+    int size = 0;
+    QueueNode * current = queue->front;
+
+    while (current != NULL) {
+        size++;
+        current = current->next;
     }
 
-    free_space(queue);
+    return size;
 }
+
 
 
