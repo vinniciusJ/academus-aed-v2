@@ -93,13 +93,16 @@ void create_module(){
     wait_to_continue();
 }
 
-void show_modules_recursive(int course_code, int module_position, FILE *module_file, FILE *subject_file, FILE
+void show_modules_recursive(int current_position, FILE *module_file, FILE *subject_file, FILE
 *professor_file){
-    if(module_position == -1){
+    if(current_position == -1){
         return;
     }
 
-    ModuleNode *module_node = get_module_by_course(course_code, module_position, module_file, subject_file);
+    Header * professor_header = read_header(professor_file);
+    Header * subject_header = read_header(subject_file);
+
+    ModuleNode *module_node = read_node(current_position, sizeof(ModuleNode), module_file);
 
     if (module_node == NULL) {
         return;
@@ -107,42 +110,19 @@ void show_modules_recursive(int course_code, int module_position, FILE *module_f
 
     Module module = module_node->value;
 
-    Header * professor_header = read_header(professor_file);
-    Header * subject_header = read_header(subject_file);
-
     Professor *professor = get_professor_by_code(module.professor_code,professor_header->root_position,
                                                  professor_file);
     Subject *subject = get_subject_by_code(module.subject_code, subject_header->root_position, subject_file);
 
+    show_modules_recursive( module_node->left, module_file, subject_file, professor_file);
     show_module(module, *subject, *professor);
-
-    show_modules_recursive(course_code, module_node->left, module_file, subject_file, professor_file);
-    show_modules_recursive(course_code, module_node->right, module_file, subject_file, professor_file);
+    show_modules_recursive( module_node->right, module_file, subject_file, professor_file);
 
     free_space(module_node);
     free_space(subject);
     free_space(professor);
 }
 
-void show_courses_recursive(int course_position, FILE *module_file, FILE *subject_file, FILE *professor_file, FILE *courses_file) {
-    if (course_position == -1) {
-        return;
-    }
-
-    Header * module_header = read_header(module_file);
-    CourseNode *course_node = read_node(course_position, sizeof(CourseNode), courses_file);
-
-    show_module_course(course_node->value.name);
-    show_module_table_header();
-
-    show_modules_recursive(course_node->value.code, module_header->root_position, module_file, subject_file, professor_file);
-
-    show_courses_recursive(course_node->left, module_file, subject_file, professor_file, courses_file);
-    show_courses_recursive(course_node->right, module_file, subject_file, professor_file, courses_file);
-
-    free_space(course_node);
-    free_space(module_header);
-}
 
 
 // Lida com a visualização de todos os módulos
@@ -154,21 +134,22 @@ void show_modules() {
     FILE *subject_file = open_bin_tree_file("subject.bin");
     FILE *courses_file = open_bin_tree_file("course.bin");
 
-    Header *course_header = read_header(courses_file);
+    Header *module_header = read_header(module_file);
 
-    if (is_list_empty(course_header)) {
+    if (is_list_empty(module_header)) {
         show_alert("Nenhum curso e módulo cadastrados");
         return;
     }
 
-    show_courses_recursive(course_header->root_position, module_file, subject_file, professor_file, courses_file);
+    show_module_table_header();
+    show_modules_recursive(module_header->root_position, module_file, subject_file, professor_file);
 
     fclose(subject_file);
     fclose(module_file);
     fclose(courses_file);
     fclose(professor_file);
 
-    free_space(course_header);
+    free_space(module_header);
 
     wait_to_continue();
 }
