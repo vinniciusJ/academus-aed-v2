@@ -44,7 +44,10 @@ void start_module_router(){
             show_module_codes_by_layer();
             break;
         case 4:
-            delete_course();
+            delete_module();
+            break;
+        case 5:
+            show_free_positions();
             break;
         default:
             show_invalid_option_message();
@@ -53,8 +56,6 @@ void start_module_router(){
 
     start_module_router();
 }
-
-
 
 // Lida com a criação de um módulo
 // Pré-condição: nenhuma
@@ -123,8 +124,6 @@ void show_modules_recursive(int current_position, FILE *module_file, FILE *subje
     free_space(professor);
 }
 
-
-
 // Lida com a visualização de todos os módulos
 // Pré-condição: nenhuma
 // Pós-condição: mostra todos os módulos cadastrados no arquivo
@@ -154,7 +153,7 @@ void show_modules() {
     wait_to_continue();
 }
 
-void delete_course(){
+void delete_module(){
     FILE * modules_file = open_bin_tree_file(MODULES_FILE);
     FILE * professor_file = open_bin_tree_file("professor.bin");
     FILE * subject_file = open_bin_tree_file("subject.bin");
@@ -234,5 +233,15 @@ void show_module_codes_by_layer(){
         printf("\n");
     }
     wait_to_continue();
+}
 
+// Mostra as posições livres dos modulos
+// Pré-condição: nenhuma
+// Pós-condição: Mostra a lista de posições
+void show_free_positions(){
+    FILE * modules_file = open_bin_tree_file(MODULES_FILE);
+
+    print_free_positions(modules_file);
+
+    fclose(modules_file);
 }

@@ -20,9 +20,13 @@ void create_module();
 // Pós-condição: mostra todos os módulos cadastrados no arquivo
 void show_modules();
 
-void delete_course();
+void delete_module();
 
 void show_module_codes_by_layer();
 
+// Mostra as posições livres dos modulos
+// Pré-condição: nenhuma
+// Pós-condição: Mostra a lista de posições
+void show_free_positions();
 
 #endif //ACADEMUS_MODULE_CONTROLLER_H

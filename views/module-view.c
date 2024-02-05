@@ -26,6 +26,7 @@ void show_module_menu(){
     printf("|[2] Listar módulos por curso                                    |\n");
     printf("|[3] Listar códigos por camada                                   |\n");
     printf("|[4] Remover módulo                                              |\n");
+    printf("|[5] Imprimir posições livres                                    |\n");
     printf("+----------------------------------------------------------------+\n");
 }
 

@@ -82,7 +82,8 @@ void handle_subject_insertion(const char *line) {
     Subject * subject = alloc(sizeof(Subject));
 
     sscanf(line, "D;%d;%[^;];%d;%d", &subject->code, subject->name, &subject->course_code, &subject->year);
-    insert_subject(*subject, header->root_position, file);
+    //insert_subject(*subject, header->root_position, file);
+    printf("| %9d| %-49s| %-49s| %-5d|\n", subject->code, subject->name, subject->course_code, subject->year);
 
     free(subject);
     free(header);

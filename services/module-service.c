@@ -70,8 +70,6 @@ Status * insert_module(Module module, int current_position, FILE * file){
     return status;
 }
 
-
-
 ModuleNode * get_module_by_course(int course_code, int current_position, FILE * modules_file, FILE * subjects_file){
     if(current_position == -1){
         return NULL;
@@ -110,17 +108,16 @@ int get_min_node(int current_position, FILE * file){
     return current_position;
 }
 
-
-int remove_module(Module module, int current_position, FILE * file){
-    printf("current position = %d\n", current_position);
+int remove_module(Module module, int current_position, FILE * file) {
     if (current_position == -1) {
         return -1;
     }
 
-    ModuleNode * node = read_node(current_position, sizeof(ModuleNode), file);
+    Header *header = read_header(file); // Ler o cabeçalho do arquivo
+    ModuleNode *node = read_node(current_position, sizeof(ModuleNode), file);
 
-    char * module_code = concatenate_integers(module.academic_year, module.subject_code);
-    char * node_code = concatenate_integers(node->value.academic_year, node->value.subject_code);
+    char *module_code = concatenate_integers(module.academic_year, module.subject_code);
+    char *node_code = concatenate_integers(node->value.academic_year, node->value.subject_code);
 
     if (strcmp(module_code, node_code) < 0) {
         node->left = remove_module(module, node->left, file);
@@ -147,14 +144,23 @@ int remove_module(Module module, int current_position, FILE * file){
         }
 
         int min_position = get_min_node(node->right, file);
-        ModuleNode * min_node = read_node(min_position, sizeof(ModuleNode), file);
+        ModuleNode *min_node = read_node(min_position, sizeof(ModuleNode), file);
 
         node->value = min_node->value;
 
-        node->right = remove_module(module, node->right, file);
+        node->right = remove_module(node->value, node->right, file);
     }
 
     set_node(node, sizeof(ModuleNode), current_position, file);
+
+    free_space(node_code);
+    free_space(module_code);
+
+    header->free_position = current_position;
+    set_header(header, file);
+    printf("current node: %d\n", current_position);
+
+    free_space(header);
 
     return current_position;
 }
@@ -187,6 +193,32 @@ int remove_module(Module module, int current_position, FILE * file){
 
      return NULL;
  }
+
+void print_free_positions(FILE *file) {
+    Header *header = read_header(file);
+    printf("Lista de Posições de Registros Livres:\n");
+
+    fseek(file, 0, SEEK_END); // Mover para o final do arquivo
+    long int file_size = ftell(file); // Obter o tamanho do arquivo em bytes
+
+    int record_size = sizeof(ModuleNode); // Tamanho do registro
+    int num_records = (file_size - sizeof(Header)) / record_size; // Calcular o número de registros no arquivo
+
+    printf("Tamanho do Arquivo: %ld bytes\n", file_size);
+    printf("Tamanho do Registro: %d bytes\n", record_size);
+    printf("Número de Registros: %d\n", num_records);
+
+    printf("Posições Livres:\n");
+    for (int i = 0; i < num_records; i++) {
+        // Calcular a posição do registro no arquivo
+        long int position = sizeof(Header) + i * record_size;
+
+        // Verificar se a posição está livre (não utilizada)
+        if (position != header->root_position && position != header->free_position) {
+            printf("%ld\n", position);
+        }
+    }
+}
 
  // Valida o módulo e retorna um status da inserção de acordo com o resultado
  // Pré-condição: um novo módulo

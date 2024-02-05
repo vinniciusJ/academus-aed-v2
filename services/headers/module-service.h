@@ -23,6 +23,8 @@ ModuleNode * get_module_by_course(int course_code, int current_position, FILE * 
 
 Module * get_module_by(int academic_year, int subject_code, FILE * modules_file);
 
+void print_free_positions(FILE *file);
+
 // Valida o módulo e retorna um status da inserção de acordo com o resultado
 // Pré-condição: um novo módulo
 // Pós-condição: status para a inserção (código 1 para sucesso e 0 para erro)
