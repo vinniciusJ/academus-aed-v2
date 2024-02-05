@@ -113,7 +113,7 @@ int remove_module(Module module, int current_position, FILE * file) {
         return -1;
     }
 
-    Header *header = read_header(file); // Ler o cabeçalho do arquivo
+    Header *header = read_header(file);
     ModuleNode *node = read_node(current_position, sizeof(ModuleNode), file);
 
     char *module_code = concatenate_integers(module.academic_year, module.subject_code);
@@ -131,12 +131,21 @@ int remove_module(Module module, int current_position, FILE * file) {
         if (node->left == -1) {
             int right = node->right;
 
+            header->free_position = current_position;
+            set_header(header, file);
+
+            printf("free: %d", current_position);
+
             free_space(node);
 
             return right;
         }
         else if (node->right == -1) {
             int left = node->left;
+
+            header->free_position = current_position;
+            set_header(header, file);
+            printf("free: %d", current_position);
 
             free_space(node);
 
@@ -155,11 +164,6 @@ int remove_module(Module module, int current_position, FILE * file) {
 
     free_space(node_code);
     free_space(module_code);
-
-    header->free_position = current_position;
-    set_header(header, file);
-    printf("current node: %d\n", current_position);
-
     free_space(header);
 
     return current_position;
