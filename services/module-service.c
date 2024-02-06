@@ -11,60 +11,56 @@
 #include "../utils/headers/file.h"
 #include "headers/professor-service.h"
 
-typedef struct Position {
-    int current;
-    int previous;
-    ModuleNode *value;
-} Position;
-
-
 // Pré-condição: um novo módulo e um arquivo aberto para escrita
 // Pós-condição: módulo salvo no arquivo lista
 Status * insert_module(Module module, int current_position, FILE * file){
     Header * header = read_header(file);
+    Status * status = validate_module(module);
 
     ModuleNode node = {module, -1, -1};
 
-    Status * status = validate_module(module);
+    int insert_position;
 
-    if(current_position == -1){
-        set_node(&node, sizeof(ModuleNode), header->top_position, file);
-        header->root_position = header->top_position;
-        header->top_position++;
-    }
-    else {
-        ModuleNode * current_node = read_node(current_position, sizeof(ModuleNode), file);
-
-        char * current_code = concatenate_integers(current_node->value.academic_year, current_node->value.subject_code);
-
-        if(strcmp(module.code, current_code) < 0){
-            if(current_node->left == -1){
-                set_node(&node, sizeof(ModuleNode), header->top_position, file);
-
-                current_node->left = header->top_position;
-                header->top_position++;
-            }
-            else {
-                insert_module(module, current_node->left, file);
-            }
-        }
-        else if(strcmp(module.code, current_code) > 0){
-            if(current_node->right == -1){
-                set_node(&node, sizeof(ModuleNode), header->top_position, file);
-
-                current_node->right = header->top_position;
-                header->top_position++;
-            }
-            else {
-                insert_module(module, current_node->right, file);
-            }
-        }
-
-        free_space(current_code);
-        set_node(current_node, sizeof(ModuleNode), current_position, file);
+    if (header->num_free_positions > 0) {
+        insert_position = header->free_positions[--(header->num_free_positions)];
+    } else {
+        insert_position = header->top_position++;
     }
 
-    set_header(header, file);
+    if(header->root_position == -1){
+        set_node(&node, sizeof(ModuleNode), insert_position, file);
+        header->root_position = insert_position;
+        set_header(header, file);
+
+        return status;
+    }
+
+    ModuleNode * current_node = read_node(current_position, sizeof(ModuleNode), file);
+
+    if(module.code < current_node->value.code){
+        if(current_node->left == -1){
+            set_node(&node, sizeof(ModuleNode), insert_position, file);
+            current_node->left = insert_position;
+            set_header(header, file);
+        }
+        else {
+            insert_module(module, current_node->left, file);
+        }
+
+    }
+    else if(module.code > current_node->value.code){
+        if(current_node->right == -1){
+            set_node(&node, sizeof(ModuleNode), insert_position, file);
+            current_node->right = insert_position;
+            set_header(header, file);
+        }
+        else {
+            insert_module(module, current_node->right, file);
+        }
+    }
+
+    set_node(current_node, sizeof(ModuleNode), current_position, file);
+
     free_space(header);
 
     return status;
@@ -131,23 +127,36 @@ int remove_module(Module module, int current_position, FILE * file) {
         if (node->left == -1) {
             int right = node->right;
 
-            header->free_position = current_position;
+            printf("num free before: %d\n", header->num_free_positions);
+            header->free_positions[header->num_free_positions] = current_position;
+            header->num_free_positions++;
+
+            printf("num free aft: %d\n", header->num_free_positions);
             set_header(header, file);
 
-            printf("free: %d", current_position);
+            printf("free: %d == %d", header->free_positions[header->num_free_positions], current_position);
 
+            free_space(header);
             free_space(node);
+            free_space(node_code);
+            free_space(module_code);
 
             return right;
         }
         else if (node->right == -1) {
             int left = node->left;
 
-            header->free_position = current_position;
+            printf("num free bef: %d\n", header->num_free_positions);
+            header->free_positions[header->num_free_positions++] = current_position;
             set_header(header, file);
-            printf("free: %d", current_position);
 
+            printf("num free aft: %d\n", header->num_free_positions);
+            printf("free: %d == %d", header->free_positions[header->num_free_positions], current_position);
+
+            free_space(header);
             free_space(node);
+            free_space(node_code);
+            free_space(module_code);
 
             return left;
         }
@@ -200,27 +209,10 @@ int remove_module(Module module, int current_position, FILE * file) {
 
 void print_free_positions(FILE *file) {
     Header *header = read_header(file);
-    printf("Lista de Posições de Registros Livres:\n");
+    printf("Lista de Posições de Registros Livres (%d):\n", header->num_free_positions);
 
-    fseek(file, 0, SEEK_END); // Mover para o final do arquivo
-    long int file_size = ftell(file); // Obter o tamanho do arquivo em bytes
-
-    int record_size = sizeof(ModuleNode); // Tamanho do registro
-    int num_records = (file_size - sizeof(Header)) / record_size; // Calcular o número de registros no arquivo
-
-    printf("Tamanho do Arquivo: %ld bytes\n", file_size);
-    printf("Tamanho do Registro: %d bytes\n", record_size);
-    printf("Número de Registros: %d\n", num_records);
-
-    printf("Posições Livres:\n");
-    for (int i = 0; i < num_records; i++) {
-        // Calcular a posição do registro no arquivo
-        long int position = sizeof(Header) + i * record_size;
-
-        // Verificar se a posição está livre (não utilizada)
-        if (position != header->root_position && position != header->free_position) {
-            printf("%ld\n", position);
-        }
+    for (int i = 0; i < 10; i++) {
+            printf("%d\n", header->free_positions[i]);
     }
 }
 

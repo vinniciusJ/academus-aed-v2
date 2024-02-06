@@ -42,12 +42,16 @@ void set_header(Header * header, FILE * file){
 // Criar uma lista nova em um arquivo
 // Pré-condição: arquivo aberto para leitura/escrita
 // Pós-condição: arquivo é inicializado com uma lista vazia
-void create_empty_list(FILE * file){
-    Header * header = (Header *) alloc(sizeof(Header));
+void create_empty_list(FILE *file) {
+    Header *header = (Header *) alloc(sizeof(Header));
 
     header->root_position = -1;
     header->top_position = 0;
-    header->free_position = -1;
+    header->num_free_positions = 0;
+
+    for (int i = 0; i < MAX_FREE_POSITIONS; ++i) {
+        header->free_positions[i] = -1;
+    }
 
     set_header(header, file);
 
