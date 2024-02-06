@@ -11,51 +11,53 @@
 // Pós-condição: status da inserção do professor
 Status * insert_professor(Professor professor, int current_position, FILE * file){
     Header * header = read_header(file);
-
     Status * status = validate_professor(professor, file);
 
-    if(current_position == -1){
-        ProfessorNode node = {professor, -1, -1};
+    ProfessorNode node = {professor, -1, -1};
 
+    if(header->root_position == -1){
         set_node(&node, sizeof(ProfessorNode), header->top_position, file);
+
         header->root_position = header->top_position;
         header->top_position++;
-    }else {
-        ProfessorNode * current_node = read_node(current_position, sizeof(ProfessorNode), file);
 
-        if(professor.code < current_node->value.code){
-            if(current_node->left == -1){
-                ProfessorNode node = {professor, -1, -1};
+        set_header(header, file);
 
-                set_node(&node, sizeof(ProfessorNode), header->top_position, file);
-
-                current_node->left = header->top_position;
-                header->top_position++;
-
-            }
-            else {
-                insert_professor(professor, current_node->left, file);
-            }
-
-        }
-        else if(professor.code > current_node->value.code){
-            if(current_node->right == -1){
-                ProfessorNode node = {professor, -1, -1};
-
-                set_node(&node, sizeof(ProfessorNode), header->top_position, file);
-
-                current_node->right = header->top_position;
-                header->top_position++;
-            }
-            else {
-                insert_professor(professor, current_node->right, file);
-            }
-        }
-
-        set_node(current_node, sizeof(ProfessorNode), current_position, file);
+        return status;
     }
 
-    set_header(header, file);
+    ProfessorNode * current_node = read_node(current_position, sizeof(ProfessorNode), file);
+
+    if(professor.code < current_node->value.code){
+        if(current_node->left == -1){
+            set_node(&node, sizeof(ProfessorNode), header->top_position, file);
+
+            current_node->left = header->top_position;
+            header->top_position++;
+
+            set_header(header, file);
+        }
+        else {
+            insert_professor(professor, current_node->left, file);
+        }
+
+    }
+    else if(professor.code > current_node->value.code){
+        if(current_node->right == -1){
+            set_node(&node, sizeof(ProfessorNode), header->top_position, file);
+
+            current_node->right = header->top_position;
+            header->top_position++;
+
+            set_header(header, file);
+        }
+        else {
+            insert_professor(professor, current_node->right, file);
+        }
+    }
+
+    set_node(current_node, sizeof(ProfessorNode), current_position, file);
+
     free_space(header);
 
     return status;

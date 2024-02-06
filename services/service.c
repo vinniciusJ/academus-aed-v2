@@ -39,14 +39,14 @@ void handle_batch_import(FILE * file) {
                 handle_subject_insertion(line);
                 break;
             case 'P':
-                handle_professor_insertion(line);
+               handle_professor_insertion(line);
                 break;
-            case 'M':
-                handle_module_insertion(line);
-                break;
-            case 'R':
-                handle_module_deletion(line);
-                break;
+//            case 'M':
+//                handle_module_insertion(line);
+//                break;
+//            case 'R':
+//                handle_module_deletion(line);
+//                break;
             default:
                 system(EXIT_SUCCESS);
         }
@@ -69,7 +69,6 @@ void handle_course_insertion(const char *line) {
     insert_course(*course, header->root_position, file);
 
     fclose(file);
-    show_courses();
 }
 
 // Lê os dados de uma disciplina do arquivo de lote e grava no sistema
@@ -82,8 +81,7 @@ void handle_subject_insertion(const char *line) {
     Subject * subject = alloc(sizeof(Subject));
 
     sscanf(line, "D;%d;%[^;];%d;%d", &subject->code, subject->name, &subject->course_code, &subject->year);
-    //insert_subject(*subject, header->root_position, file);
-    printf("| %9d| %-49s| %-49s| %-5d|\n", subject->code, subject->name, subject->course_code, subject->year);
+    insert_subject(*subject, header->root_position, file);
 
     free(subject);
     free(header);
