@@ -15,48 +15,51 @@ Status * insert_subject(Subject subject, int current_position, FILE * file){
     Header * header = read_header(file);
     Status * status = validate_subject(subject, file);
 
-    if(current_position == -1){
-        SubjectNode node = {subject, -1, -1};
+    SubjectNode node = {subject, -1, -1};
 
+    if(header->root_position == -1){
         set_node(&node, sizeof(SubjectNode), header->top_position, file);
+
         header->root_position = header->top_position;
         header->top_position++;
-    }
-    else {
-        SubjectNode * current_node = read_node(current_position, sizeof(SubjectNode), file);
 
-        if(subject.code < current_node->value.code){
-            if(current_node->left == -1){
-                SubjectNode node = {subject, -1, -1};
+        set_header(header, file);
 
-                set_node(&node, sizeof(SubjectNode), header->top_position, file);
-
-                current_node->left = header->top_position;
-                header->top_position++;
-            }
-            else {
-                insert_subject(subject, current_node->left, file);
-            }
-
-        }
-        else if(subject.code > current_node->value.code){
-            if(current_node->right == -1){
-                SubjectNode node = {subject, -1, -1};
-
-                set_node(&node, sizeof(SubjectNode), header->top_position, file);
-
-                current_node->right = header->top_position;
-                header->top_position++;
-            }
-            else {
-                insert_subject(subject, current_node->right, file);
-            }
-        }
-
-        set_node(current_node, sizeof(SubjectNode), current_position, file);
+        return status;
     }
 
-    set_header(header, file);
+    SubjectNode * current_node = read_node(current_position, sizeof(SubjectNode), file);
+
+    if(subject.code < current_node->value.code){
+        if(current_node->left == -1){
+            set_node(&node, sizeof(SubjectNode), header->top_position, file);
+
+            current_node->left = header->top_position;
+            header->top_position++;
+
+            set_header(header, file);
+        }
+        else {
+            insert_subject(subject, current_node->left, file);
+        }
+
+    }
+    else if(subject.code > current_node->value.code){
+        if(current_node->right == -1){
+            set_node(&node, sizeof(SubjectNode), header->top_position, file);
+
+            current_node->right = header->top_position;
+            header->top_position++;
+
+            set_header(header, file);
+        }
+        else {
+            insert_subject(subject, current_node->right, file);
+        }
+    }
+
+    set_node(current_node, sizeof(SubjectNode), current_position, file);
+
     free_space(header);
 
     return status;
