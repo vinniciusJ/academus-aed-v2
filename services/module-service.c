@@ -37,8 +37,9 @@ Status * insert_module(Module module, int current_position, FILE * file){
     }
 
     ModuleNode * current_node = read_node(current_position, sizeof(ModuleNode), file);
+    char * current_code = concatenate_integers(current_node->value.academic_year, current_node->value.subject_code);
 
-    if(module.code < current_node->value.code){
+    if(strcmp(module.code, current_code) < 0){
         if(current_node->left == -1){
             set_node(&node, sizeof(ModuleNode), insert_position, file);
             current_node->left = insert_position;
@@ -49,7 +50,7 @@ Status * insert_module(Module module, int current_position, FILE * file){
         }
 
     }
-    else if(module.code > current_node->value.code){
+    else if(strcmp(module.code, current_code) > 0){
         if(current_node->right == -1){
             set_node(&node, sizeof(ModuleNode), insert_position, file);
             current_node->right = insert_position;
