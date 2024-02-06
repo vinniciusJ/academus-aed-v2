@@ -94,7 +94,10 @@ void create_module(){
     wait_to_continue();
 }
 
-void show_modules_recursive(int current_position, FILE *module_file, FILE *subject_file, FILE
+// Função recursiva para mostrar em ordem os modulos
+// Pré-condição: arquivo de modulo, disciplina e de professor, abertos para leitura
+// Pós-condição: mostra os modulos ordenados pelo código
+void show_modules_in_order(int current_position, FILE *module_file, FILE *subject_file, FILE
 *professor_file){
     if(current_position == -1){
         return;
@@ -115,9 +118,9 @@ void show_modules_recursive(int current_position, FILE *module_file, FILE *subje
                                                  professor_file);
     Subject *subject = get_subject_by_code(module.subject_code, subject_header->root_position, subject_file);
 
-    show_modules_recursive( module_node->left, module_file, subject_file, professor_file);
+    show_modules_in_order( module_node->left, module_file, subject_file, professor_file);
     show_module(module, *subject, *professor);
-    show_modules_recursive( module_node->right, module_file, subject_file, professor_file);
+    show_modules_in_order( module_node->right, module_file, subject_file, professor_file);
 
     free_space(module_node);
     free_space(subject);
@@ -141,7 +144,7 @@ void show_modules() {
     }
 
     show_module_table_header();
-    show_modules_recursive(module_header->root_position, module_file, subject_file, professor_file);
+    show_modules_in_order(module_header->root_position, module_file, subject_file, professor_file);
 
     fclose(subject_file);
     fclose(module_file);
@@ -153,6 +156,9 @@ void show_modules() {
     wait_to_continue();
 }
 
+// Exclui um módulo do arquivo
+// Pré-condição: nenhuma
+// Pós-condição: um módulo é removido do arquivo module.bin
 void delete_module(){
     FILE * modules_file = open_bin_tree_file(MODULES_FILE);
     FILE * professor_file = open_bin_tree_file("professor.bin");
@@ -205,6 +211,9 @@ void delete_module(){
     fclose(professor_file);
 }
 
+// Mostra os códigos dos modulos por camada
+// Pré-condição: nenhuma
+// Pós-condição: mostra todos os códigos dos módulos em cadamas conforme foram inseridos
 void show_module_codes_by_layer(){
     FILE * file = open_bin_tree_file(MODULES_FILE);
     Header * header = read_header(file);

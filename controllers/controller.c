@@ -16,7 +16,6 @@ void create_in_batch() {
 
     handle_batch_import(file);
 
-    //wait_to_continue();
+    wait_to_continue();
     fclose(file);
-//    free_space(filename);
 }

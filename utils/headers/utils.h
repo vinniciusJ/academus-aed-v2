@@ -16,6 +16,9 @@ void * alloc(size_t size);
 // Pós-condição: retorna um endereço NULL
 void * free_space(void * ptr);
 
+// Concatena dois inteiros em uma string
+// Pré-condição: dois inteiros
+// Pós-condição: uma string com o seguinte padrão `${num1}${num2}`
 char* concatenate_integers(int num1, int num2);
 
 #endif //ACADEMUS_MEMORY_H

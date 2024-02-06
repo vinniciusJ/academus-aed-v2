@@ -10,7 +10,7 @@
 #define ACADEMUS_PROFESSOR_SERVICE_H
 
 // Insere um value no arquivo lista
-// Pré-condição: um novo professor e um arquivo aberto para escrita
+// Pré-condição: um novo professor, uma posicao inicial, um arquivo aberto para escrita
 // Pós-condição: status da inserção do professor
 Status * insert_professor(Professor professor, int current_position, FILE * file);
 

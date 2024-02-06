@@ -11,7 +11,8 @@
 #include "../utils/headers/file.h"
 #include "headers/professor-service.h"
 
-// Pré-condição: um novo módulo e um arquivo aberto para escrita
+// Insere um value no arquivo lista
+// Pré-condição: um novo módulo, uma posição inicial e um arquivo aberto para escrita
 // Pós-condição: módulo salvo no arquivo lista
 Status * insert_module(Module module, int current_position, FILE * file){
     Header * header = read_header(file);

@@ -15,6 +15,11 @@ void start_subject_router();
 // Pós-condição: disciplina criada e inserido no arquivo
 void create_subject();
 
+// Função recursiva para mostrar em ordem as disciplinas
+// Pré-condição: arquivo aberto para leitura
+// Pós-condição: mostra as disciplinas ordenadas pelo código
+void show_subjects_in_order(int currentPosition, FILE * course_file, FILE * subject_file);
+
 // Lida com a visualização de todos as matérias
 // Pré-condição: nenhuma
 // Pós-condição: mostra todos as matérias cadastradas no arquivo

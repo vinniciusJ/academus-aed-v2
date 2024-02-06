@@ -71,6 +71,9 @@ void create_course() {
     wait_to_continue();
 }
 
+// Função recursiva para mostrar em ordem os cursos
+// Pré-condição: arquivo aberto para leitura
+// Pós-condição: mostra os cursos ordenados pelo código
 void show_courses_inorder(int currentPosition, FILE *file) {
     if (currentPosition == -1) {
         return;
@@ -78,16 +81,9 @@ void show_courses_inorder(int currentPosition, FILE *file) {
 
     CourseNode *course_node = read_node(currentPosition, sizeof(CourseNode), file);
 
-    // Traverse the left subtree
     show_courses_inorder(course_node->left, file);
-
-    // Process the current node (display the course information)
-
     show_course(course_node->value);
-
-    // Traverse the right subtree
     show_courses_inorder(course_node->right, file);
-
 }
 
 
@@ -97,9 +93,6 @@ void show_courses_inorder(int currentPosition, FILE *file) {
 void show_courses() {
    FILE * file = open_bin_tree_file("course.bin");
     Header * header = read_header(file);
-
-    int position = header->root_position;
-    CourseNode * course_node = NULL;
 
     show_course_list_heading();
 
@@ -114,6 +107,5 @@ void show_courses() {
 
     fclose(file);
     wait_to_continue();
-
 }
 

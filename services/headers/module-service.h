@@ -10,7 +10,7 @@
 #define ACADEMUS_MODULE_SERVICE_H
 
 // Insere um value no arquivo lista
-// Pré-condição: um novo módulo e um arquivo aberto para escrita
+// Pré-condição: um novo módulo, uma posição inicial e um arquivo aberto para escrita
 // Pós-condição: módulo salvo no arquivo lista
 Status * insert_module(Module module, int current_position, FILE * file);
 

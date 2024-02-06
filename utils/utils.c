@@ -31,6 +31,9 @@ void * free_space(void * ptr){
     return NULL;
 }
 
+// Concatena dois inteiros em uma string
+// Pré-condição: dois inteiros
+// Pós-condição: uma string com o seguinte padrão `${num1}${num2}`
 char* concatenate_integers(int num1, int num2) {
     int length = snprintf(NULL, 0, "%d", num1) + snprintf(NULL, 0, "%d", num2) + 1;
 
