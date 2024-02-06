@@ -207,15 +207,6 @@ int remove_module(Module module, int current_position, FILE * file) {
      return NULL;
  }
 
-void print_free_positions(FILE *file) {
-    Header *header = read_header(file);
-    printf("Lista de Posições de Registros Livres (%d):\n", header->num_free_positions);
-
-    for (int i = 0; i < 10; i++) {
-            printf("%d\n", header->free_positions[i]);
-    }
-}
-
  // Valida o módulo e retorna um status da inserção de acordo com o resultado
  // Pré-condição: um novo módulo
  // Pós-condição: status para a inserção (código 1 para sucesso e 0 para erro)

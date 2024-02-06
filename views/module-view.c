@@ -6,6 +6,7 @@
 #include "../utils/headers/utils.h"
 #include "./headers/module-view.h"
 #include "headers/views.h"
+#include "../models/header.h"
 
 // Imprime o menu o cabeçalho do menu da seção de módulos
 // Pré-condição: nenhuma
@@ -83,4 +84,22 @@ void show_module(Module module, Subject subject, Professor professor){
 void show_emtpy_table_row(){
     printf("| %-122s |\n", "Nenhum registro encontrado");
     printf("+----------------------------------------------------------------------------------------------------------------------------+\n");
+}
+
+// Mostra as posições que estão livres no arquivo
+// Pré-condição: cabeçalho
+// Pós-condição: lista é impressa no terminal
+void show_free_positions(Header * header) {
+    printf(""
+           "Posições Livres:\n");
+
+    for (int i = 0; i < header->num_free_positions; i++) {
+        printf("%d -> ", header->free_positions[i]);
+    }
+
+    printf("NULL");
+
+    printf("\nTotal: %d\n", header->num_free_positions);
+    wait_to_continue();
+
 }

@@ -47,7 +47,7 @@ void start_module_router(){
             delete_module();
             break;
         case 5:
-            show_free_positions();
+            print_free_positions();
             break;
         default:
             show_invalid_option_message();
@@ -190,6 +190,7 @@ void delete_module(){
 
         int root_position = remove_module(*module, module_header->root_position, modules_file);
 
+        module_header = read_header(modules_file);
         module_header->root_position = root_position;
 
         set_header(module_header, modules_file);
@@ -238,10 +239,12 @@ void show_module_codes_by_layer(){
 // Mostra as posições livres dos modulos
 // Pré-condição: nenhuma
 // Pós-condição: Mostra a lista de posições
-void show_free_positions(){
+void print_free_positions(){
     FILE * modules_file = open_bin_tree_file(MODULES_FILE);
+    Header * header = read_header(modules_file);
 
-    print_free_positions(modules_file);
+    show_free_positions(header);
 
+    free(header);
     fclose(modules_file);
 }

@@ -1,9 +1,11 @@
+
 //
 // Created by vinniciusj on 13/09/23.
 //
 #include "../../models/module.h"
 #include "../../models/professor.h"
 #include "../../models/subject.h"
+#include "../../models/header.h"
 
 #ifndef ACADEMUS_MODULE_VIEW_H
 #define ACADEMUS_MODULE_VIEW_H
@@ -34,6 +36,11 @@ void show_module_course(char * course_name);
 // Pré-condição: módulo
 // Pós-condição: módulo é impresso no terminal
 void show_module(Module module, Subject subject, Professor professor);
+
+// Mostra as posições que estão livres no arquivo
+// Pré-condição: cabeçalho
+// Pós-condição: lista é impressa no terminal
+void show_free_positions(Header * header);
 
 void show_emtpy_table_row();
 
