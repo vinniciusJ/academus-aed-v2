@@ -30,8 +30,6 @@ Module * input_module();
 // Pós-condição: nenhuma
 void show_module_table_header();
 
-void show_module_course(char * course_name);
-
 // Mostra no terminal uma linha que representa um módulos cadastrado, deve ser usada em tabelas
 // Pré-condição: módulo
 // Pós-condição: módulo é impresso no terminal

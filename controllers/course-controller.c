@@ -63,8 +63,6 @@ void create_course() {
         show_error_message(status->message);
     }
 
-    wait_to_continue();
-
     free_space(course);
     free_space(status);
     fclose(file);

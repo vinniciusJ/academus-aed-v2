@@ -19,7 +19,7 @@ void create_course();
 // Função recursiva para mostrar em ordem os cursos
 // Pré-condição: arquivo aberto para leitura
 // Pós-condição: mostra os cursos ordenados pelo código
-void show_courses_inorder(int currentPosition, FILE *file)
+void show_courses_inorder(int currentPosition, FILE *file);
 
 // Lida com a visualização de todos os cursos
 // Pré-condição: nenhuma

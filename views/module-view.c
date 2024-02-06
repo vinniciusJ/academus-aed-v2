@@ -24,7 +24,7 @@ void show_module_menu(){
 
     printf("|[0] Voltar                                                      |\n");
     printf("|[1] Cadastrar módulo                                            |\n");
-    printf("|[2] Listar módulos por curso                                    |\n");
+    printf("|[2] Listar módulos                                              |\n");
     printf("|[3] Listar códigos por camada                                   |\n");
     printf("|[4] Remover módulo                                              |\n");
     printf("|[5] Imprimir posições livres                                    |\n");
@@ -69,21 +69,16 @@ void show_module_course(char * course_name){
 // Pré-condição: nenhuma
 // Pós-condição: nenhuma
 void show_module_table_header(){
-    printf("| %10s| %-10s| %-49s| %-49s|\n", "Ano letivo", "Série", "Disciplina", "Professor");
-    printf("|-----------|----------|--------------------------------------------------|--------------------------------------------------|\n");
+    printf("| %10s| %10s| %-10s| %18s| %-49s| %-49s|\n", "Cod", "Ano letivo", "Série", "Cod. Disciplina", "Disciplina", "Professor");
+    printf("|-----------|-----------|----------|-------------------|--------------------------------------------------|--------------------------------------------------|\n");
 }
 
 // Mostra no terminal uma linha que representa um módulos cadastrado, deve ser usada em tabelas
 // Pré-condição: módulo
 // Pós-condição: módulo é impresso no terminal
 void show_module(Module module, Subject subject, Professor professor){
-    printf("| %10d| %9d| %-49s| %-49s|\n", module.academic_year, subject.year, subject.name, professor.name);
-    printf("|-----------|----------|--------------------------------------------------|--------------------------------------------------|\n");
-}
-
-void show_emtpy_table_row(){
-    printf("| %-122s |\n", "Nenhum registro encontrado");
-    printf("+----------------------------------------------------------------------------------------------------------------------------+\n");
+    printf("| %10s| %9d| %10d| %18d| %-49s| %-49s|\n", concatenate_integers(module.academic_year, module.subject_code), module.academic_year, subject.year, subject.code, subject.name, professor.name);
+    printf("|-----------|-----------|----------|-------------------|--------------------------------------------------|--------------------------------------------------|\n");
 }
 
 // Mostra as posições que estão livres no arquivo

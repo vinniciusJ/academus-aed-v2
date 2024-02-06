@@ -128,14 +128,10 @@ int remove_module(Module module, int current_position, FILE * file) {
         if (node->left == -1) {
             int right = node->right;
 
-            printf("num free before: %d\n", header->num_free_positions);
             header->free_positions[header->num_free_positions] = current_position;
             header->num_free_positions++;
 
-            printf("num free aft: %d\n", header->num_free_positions);
             set_header(header, file);
-
-            printf("free: %d == %d", header->free_positions[header->num_free_positions], current_position);
 
             free_space(header);
             free_space(node);
@@ -147,12 +143,9 @@ int remove_module(Module module, int current_position, FILE * file) {
         else if (node->right == -1) {
             int left = node->left;
 
-            printf("num free bef: %d\n", header->num_free_positions);
             header->free_positions[header->num_free_positions++] = current_position;
             set_header(header, file);
 
-            printf("num free aft: %d\n", header->num_free_positions);
-            printf("free: %d == %d", header->free_positions[header->num_free_positions], current_position);
 
             free_space(header);
             free_space(node);
