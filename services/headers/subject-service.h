@@ -11,7 +11,7 @@
 #define ACADEMUS_SUBJECT_SERVICE_H
 
 // Insere um value no arquivo lista
-// Pré-condição: uma nova disciplina e um arquivo aberto para escrita
+// Pré-condição: uma nova disciplina, um arquivo inicial, um arquivo aberto para escrita
 // Pós-condição: status da inserção da disciplina
 Status * insert_subject(Subject subject, int current_position, FILE * file);
 

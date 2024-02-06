@@ -11,7 +11,7 @@
 #define ACADEMUS_COURSE_SERVICE_H
 
 // Insere um curso no arquivo lista
-// Pré-condição: um novo curso e um arquivo aberto para escrita
+// Pré-condição: um novo curso, uma posição inicial e um arquivo aberto para escrita
 // Pós-condição: status da inserção do curso
 Status * insert_course(Course course, int currentPosition, FILE * file);
 

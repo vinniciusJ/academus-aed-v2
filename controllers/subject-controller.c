@@ -78,6 +78,9 @@ void create_subject() {
     wait_to_continue();
 }
 
+// Função recursiva para mostrar em ordem as disciplinas
+// Pré-condição: arquivo aberto para leitura
+// Pós-condição: mostra as disciplinas ordenadas pelo código
 void show_subjects_in_order(int currentPosition, FILE * course_file, FILE * subject_file) {
     if (currentPosition == -1) {
         return;
@@ -85,17 +88,12 @@ void show_subjects_in_order(int currentPosition, FILE * course_file, FILE * subj
 
     Header * course_header = read_header(course_file);
 
-
     SubjectNode *subject_node = read_node(currentPosition, sizeof(SubjectNode), subject_file);
     Course * course = get_course_by_code(subject_node->value.course_code, course_header->root_position,
                                                    course_file);
 
     show_subjects_in_order(subject_node->left, course_file, subject_file);
-
-
     show_subject(subject_node->value, *course);
-
-
     show_subjects_in_order(subject_node->right, course_file, subject_file);
 
 }
@@ -109,10 +107,6 @@ void show_subjects() {
 
     Header * header = read_header(subject_file);
 
-    int position = header->root_position;
-
-    SubjectNode * subject_node = NULL;
-    Course * course = NULL;
 
     if(is_list_empty(header)){
         show_alert("Não há nenhuma disciplina cadastrada!");

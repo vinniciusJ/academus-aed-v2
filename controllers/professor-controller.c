@@ -65,6 +65,9 @@ void create_professor() {
     wait_to_continue();
 }
 
+// Função recursiva para mostrar em ordem os professores
+// Pré-condição: arquivo aberto para leitura
+// Pós-condição: mostra os professores ordenados pelo código
 void show_professors_in_order(int currentPosition, FILE *file) {
     if (currentPosition == -1) {
         return;
@@ -72,15 +75,9 @@ void show_professors_in_order(int currentPosition, FILE *file) {
 
     ProfessorNode *professor_node = read_node(currentPosition, sizeof(ProfessorNode), file);
 
-    // Traverse the left subtree
     show_professors_in_order(professor_node->left, file);
-
-    // Process the current node (display the course information)
     show_professor(professor_node->value);
-
-    // Traverse the right subtree
     show_professors_in_order(professor_node->right, file);
-
 }
 
 // Lida com a visualização de todos os professores

@@ -1,6 +1,7 @@
 //
 // Created by vinniciusj on 13/09/23.
 //
+#include<stdio.h>
 
 #ifndef ACADEMUS_PROFESSOR_CONTROLLER_H
 #define ACADEMUS_PROFESSOR_CONTROLLER_H
@@ -14,6 +15,11 @@ void start_professor_router();
 // Pré-condição: nenhuma
 // Pós-condição: professor criado e inserido no arquivo
 void create_professor();
+
+// Função recursiva para mostrar em ordem os professores
+// Pré-condição: arquivo aberto para leitura
+// Pós-condição: mostra os professores ordenados pelo código
+void show_professors_in_order(int currentPosition, FILE *file);
 
 // Lida com a visualização de todos os professores
 // Pré-condição: nenhuma
