@@ -175,7 +175,8 @@ void delete_module(){
     int subject_code = input_number("Informe o código da disciplina");
     printf("\n");
 
-    Module * module = get_module_by(academic_year, subject_code, modules_file);
+    Module * module = get_module_by_code(concatenate_integers(academic_year, subject_code),
+                                         module_header->root_position, modules_file);
 
     if(module == NULL){
         show_alert("Não foi possível encontrar nenhum módulo de disciplina");

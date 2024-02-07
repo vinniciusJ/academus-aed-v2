@@ -19,9 +19,7 @@ Status * insert_module(Module module, int current_position, FILE * file);
 // Pós-condição: módulo retirado da lista caso pertença a ela
 int remove_module(Module module,int current_position, FILE * file);
 
-ModuleNode * get_module_by_course(int course_code, int current_position, FILE * modules_file, FILE * subjects_file);
-
-Module * get_module_by(int academic_year, int subject_code, FILE * modules_file);
+Module * get_module_by_code(char * code, int current_position, FILE * modules_file);
 
 // Valida o módulo e retorna um status da inserção de acordo com o resultado
 // Pré-condição: um novo módulo

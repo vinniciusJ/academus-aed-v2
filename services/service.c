@@ -41,12 +41,12 @@ void handle_batch_import(FILE * file) {
             case 'P':
                handle_professor_insertion(line);
                 break;
-//            case 'M':
-//                handle_module_insertion(line);
-//                break;
-//            case 'R':
-//                handle_module_deletion(line);
-//                break;
+            case 'M':
+                handle_module_insertion(line);
+                break;
+            case 'R':
+                handle_module_deletion(line);
+                break;
             default:
                 system(EXIT_SUCCESS);
         }
@@ -117,6 +117,7 @@ void handle_module_insertion(const char *line) {
     sscanf(line, "M;%d;%d;%d", &module->subject_code, &module->academic_year, &module->professor_code);
     module->code = concatenate_integers(module->academic_year, module->subject_code);
 
+    printf("M;%d;%d;%d",module->subject_code, module->academic_year, module->professor_code);
     insert_module(*module, header->root_position, file);
 
     free(module);

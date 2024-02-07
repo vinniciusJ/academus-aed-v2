@@ -173,34 +173,29 @@ int remove_module(Module module, int current_position, FILE * file) {
     return current_position;
 }
 
- Module * get_module_by(int academic_year, int subject_code, FILE * modules_file){
-     Header *header = read_header(modules_file);
-     ModuleNode *module_node = NULL;
+Module * get_module_by_code(char * code, int current_position, FILE * modules_file){
+    Header * header = read_header(modules_file);
 
-     int position = header->root_position;
+    if(is_list_empty(header) || current_position == -1){
+        return NULL;
+    }
 
-     if (is_list_empty(header)) {
-         return NULL;
-     }
+    ModuleNode * node = read_node(current_position, sizeof(ModuleNode), modules_file);
 
-     while (position != -1) {
-         module_node = read_node(position, sizeof(ModuleNode), modules_file);
+    if(node != NULL){
+        char * current_code = concatenate_integers(node->value.academic_year, node->value.subject_code);
 
-         Module module = module_node->value;
+        if(strcmp(code, current_code) < 0 ){
+            return get_module_by_code(code, node->left, modules_file);
+        }
+        else if(strcmp(code, current_code) > 0){
+            return get_module_by_code(code, node->right, modules_file);
+        }
+        return &node->value;
+    }
 
-         if (module.subject_code == subject_code && module.academic_year == academic_year) {
-             return &module_node->value;
-         } else if (academic_year < module.academic_year || (academic_year == module.academic_year && subject_code < module.subject_code)) {
-             // If the target module should be in the left subtree
-             position = module_node->left;
-         } else {
-             // If the target module should be in the right subtree
-             position = module_node->right;
-         }
-     }
-
-     return NULL;
- }
+    return NULL;
+}
 
  // Valida o módulo e retorna um status da inserção de acordo com o resultado
  // Pré-condição: um novo módulo
